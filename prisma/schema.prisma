@@ -14,17 +14,24 @@ datasource db {
 }
 
 model User {
-  id       String     @id
-  name     String
-  rooms    RoomUser[]
-  messages Message[]
+  id         String     @id
+  remark     String     @default("Hey there i am using this chatapp")
+  name       String
+  image      String     @default("none")
+  rooms      RoomUser[]
+  messages   Message[]
+  lastOnline String     @default("2:00 PM")
 }
 
 model Room {
-  id       String     @id @default(uuid())
-  name     String     @unique
-  users    RoomUser[]
-  messages Message[]
+  id         String     @id @default(uuid())
+  remark     String     @default("None")
+  type       String     @default("public")
+  image      String     @default("none")
+  name       String     @default("none")
+  lastOnline String     @default("2:00 PM")
+  users      RoomUser[]
+  messages   Message[]
 }
 
 model RoomUser {
@@ -33,8 +40,6 @@ model RoomUser {
   roomId String
   user   User   @relation(fields: [userId], references: [id])
   room   Room   @relation(fields: [roomId], references: [id])
-
-  @@unique([userId, roomId])
 }
 
 model Message {

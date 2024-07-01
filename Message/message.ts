@@ -34,6 +34,10 @@ const sendMessage = async (req: Request, res: Response): Promise<void> => {
 const deleteMessage = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
+    if (!id) {
+      res.status(400).json({ message: "id is required" });
+      return;
+    }
     await prisma.message.delete({
       where: {
         id,

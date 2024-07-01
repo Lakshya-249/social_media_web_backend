@@ -4,15 +4,16 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const createRoom = async (req: Request, res: Response): Promise<void> => {
-  const { name, userid } = req.query;
+  const { name, userid, remark } = req.body;
   try {
-    if (!name || !userid) {
+    if (!userid) {
       res.status(400).json({ message: "all field are required but not given" });
       return;
     }
     const room = await prisma.room.create({
       data: {
-        name: name as string,
+        name: (name as string) || "none",
+        remark: (remark as string) || "",
         users: {
           create: {
             userId: userid as string,

@@ -63,7 +63,7 @@ const addUserstoRoom = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ message: "Bad Request; all fields required" });
       return;
     }
-    console.log(multiuser);
+    // console.log(multiuser);
 
     const user = await prisma.roomUser.createManyAndReturn({
       data: multiuser,
@@ -76,4 +76,28 @@ const addUserstoRoom = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { addUserstoRoom, makePrivateRoom };
+const createGroup = async (req: Request, res: Response): Promise<void> => {
+  const { groupmembers, name } = req.body;
+  try {
+    if (!groupmembers) {
+      res.status(400).json({ message: "Bad Request; groupmembers required" });
+      return;
+    }
+    const group = await prisma.room.create({
+      data: {
+        name: name,
+        users: {
+          createMany: {
+            data: groupmembers.map((user: any) => ({ userId: user.id })),
+          },
+        },
+      },
+    });
+    res.status(200).json(group);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export { addUserstoRoom, makePrivateRoom, createGroup };
